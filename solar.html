@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+ 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+
+	<!--meta name="viewport" content="initial-scale=1.0, user-scalable=no" /-->
+	<title>日出/日没</title>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCaWhf33YPeuwubvurqP9thsc74YeFnkxc&sensor=true"></script>
+	<script type="text/javascript" src="./solar.js"></script>
+    <script type="text/javascript">
+	  window.addEventListener('DOMContentLoaded',
+		// メージ本体が読み込まれたタイミングで実行するコード
+		function(){
+			//
+			getProfile();
+			
+			var form = document.getElementById("para");
+			today_calc(form);
+		}, false
+	   );
+	   
+	   function googleMap(ido, keido, koudo) {
+		var childWindow  = window.open('./googleMap.html' , 'Map', 'scrollbars=no,width=750, height=750');
+			childWindow.focus();
+		}
+		
+    </script>
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+  </head>
+  <body>
+    <!--div id="map_canvas" style="width:100%; height:100%"></div-->
+	<!--div id="map_canvas" style="width:60%; height:50%"></div--><BR>
+	<div>
+		<form NAME ="para" id='para'>
+
+			<div align='center'  width="300">
+				<table border="1" width="300" cellspacing="0" cellpadding="5">
+					<tr>
+						<td align="center" colspan='2' >計算地点</td>
+						<td align="left" ><button type=button onclick="googleMap('φ','λ','H')" class="googleMapIdo">Google</button></td>
+					</tr>
+					<tr>
+						<td align="center" >緯度</td>
+						<td align="left" ><input size='6' autocomplete=off type='text' name='lat' id='var_φ' value='' class='text' onKeyDown='nextFocus2(event)'></td>
+						<td align="left" >度</td>
+					</tr>
+					<tr>
+						<td align="center" >経度</td>
+						<td align="left" ><input size='6' autocomplete=off type='text' name='lon' id='var_λ' value='' class='text' onKeyDown='nextFocus2(event)'></td>
+						<td align="left" >度</td>
+					</tr>
+					<tr>
+						<td align="center" >標高</td>
+						<td align="left" ><input size='4' autocomplete=off type='text' name='alt' id='var_H' value='' class='text' onKeyDown='nextFocus2(event)'><br/></td>
+						<td align="left" >m</td>
+					</tr>
+					<tr>
+						<td align="center" >日付</td>
+						<td align="left" ><INPUT TYPE="date" name='day' id='day' VALUE="" onChange='calc(this.form)'><br/></td>
+						<td align="left" ><INPUT TYPE="button" VALUE="今日" onClick="today_calc(this.form)"><br/></td>
+					</tr>
+					<tr>
+						<td align="center" >UTC</td>
+						<td align="left" ><INPUT NAME="def" TYPE="TEXT" SIZE=5 VALUE="9"><br/></td>
+						<td align="left" >Hr</td>
+					</tr>
+				</table>	
+				<br/>
+				<table border="1" width="300" cellspacing="0" cellpadding="5">
+					<tr>
+						<th align="center" colspan='4' id='solar_caption'><br/></th>
+						<td align="center"><INPUT TYPE="button" VALUE="再計算" onClick="calc(this.form)"><br/></td>
+					</tr>
+					<tr>
+						<td align="center"><br/></td>
+						<td align="center">定義</td>
+						<td align="center">時刻</td>
+						<td align="center">方位</td>
+						<td align="center">高度</td>
+					</tr>
+					<tr>
+						<td align="center" valign="center" rowspan="5">朝</td>
+						<td align="center">天文薄明</td>
+						<td align="center" id='solar_mt1'><br/></td>
+						<td align="right"  id='solar_md1'><br/></td>
+						<td align="right"  id='solar_mh1'><br/></td>
+					</tr>
+					<tr>
+						<td align="center">航海薄明</td>
+						<td align="center" id='solar_mt2'><br/></td>
+						<td align="right"  id='solar_md2'><br/></td>
+						<td align="right"  id='solar_mh2'><br/></td>
+					</tr>
+					<tr>
+						<td align="center">夜明け</td>
+						<td align="center" id='solar_mt3'><br/></td>
+						<td align="right"  id='solar_md3'><br/></td>
+						<td align="right"  id='solar_mh3'><br/></td>
+					</tr>
+					<tr>
+						<td align="center">市民薄明</td>
+						<td align="center" id='solar_mt4'><br/></td>
+						<td align="right"  id='solar_md4'><br/></td>
+						<td align="right"  id='solar_mh4'><br/></td>
+					</tr>
+					<tr>
+						<td align="center">日出</td>
+						<td align="center" id='solar_mt5'><br/></td>
+						<td align="right"  id='solar_md5'><br/></td>
+						<td align="right"  id='solar_mh5'><br/></td>
+					</tr>
+					<tr>
+						<td align="center" valign="center">昼</td>
+						<td align="center">南中</td>
+						<td align="center" id='solar_t'><br/></td>
+						<td align="right"  id='solar_d'><br/></td>
+						<td align="right"  id='solar_h'><br/></td>
+					</tr>
+					<tr>
+						<td align="center" valign="center" rowspan="5">夕</td>
+						<td align="center">日没</td>
+						<td align="center" id='solar_nt1'><br/></td>
+						<td align="right"  id='solar_nd1'><br/></td>
+						<td align="right"  id='solar_nh1'><br/></td>
+					</tr>
+					<tr>
+						<td align="center">市民薄明</td>
+						<td align="center" id='solar_nt2'><br/></td>
+						<td align="right"  id='solar_nd2'><br/></td>
+						<td align="right"  id='solar_nh2'><br/></td>
+					</tr>
+					<tr>
+						<td align="center">日暮れ</td>
+						<td align="center" id='solar_nt3'><br/></td>
+						<td align="right"  id='solar_nd3'><br/></td>
+						<td align="right"  id='solar_nh3'><br/></td>
+					</tr>
+					<tr>
+						<td align="center">航海薄明</td>
+						<td align="center" id='solar_nt4'><br/></td>
+						<td align="right"  id='solar_nd4'><br/></td>
+						<td align="right"  id='solar_nh4'><br/></td>
+					</tr>
+					<tr>
+						<td align="center">天文薄明</td>
+						<td align="center" id='solar_nt5'><br/></td>
+						<td align="right"  id='solar_nd5'><br/></td>
+						<td align="right"  id='solar_nh5'><br/></td>
+					</tr>
+				</table><br/>
+			</div>	
+		</form>
+	</div>
+  </body>
+</html>
