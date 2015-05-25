@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+<body onload="initialize('φ','λ','H','','' ,'' )">
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry&language=ja" charset="UTF-8"></script>
+	<script src="./googleMap.js"></script>
+	<form method='post' class=fm>
+		<input type='text' name='place' id='place' value=''  onKeyPress='return submitCheck(event);' >
+		<font size=-1>
+			<input type='button' value='住所検索' onclick='placeToMap();'>
+			<input type='button' value='現在地' onclick='presentLocation();'>
+		</font><br>
+	</form>
+	<script type="text/javascript">
+		function submitCheck(e){
+			if (!e) var e = window.event;
+			if(e.keyCode == 13){
+				placeToMap();
+				return false;
+			}
+		}
+
+	</script>
+
+	<div id="map_canvas"></div>
+	<style>
+		html {height: 100%;font-size:90%;}
+		body { 
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			margin-left:5px;
+		}
+		#map_canvas {
+			width: 99%;
+			height: calc(99% - 156px);
+		}
+		
+		#place{width: calc(95% - 130px); margin-bottom:5px; }
+		.fm{padding:10px;}
+		.idokeido{border:1px #b0bec9 solid;}
+		.idokeido td{border:1px #b0bec9 solid;font-size:95%;}
+		.kyoribtn{ margin:0;padding:0;}
+	</style>
+	<table  border=0 cellpadding=3 cellspacing=0 height='110'>
+		<tr>
+			<td valign=top>
+				<table border=0 cellpadding1 cellspacing=0 class='idokeido'>
+					<tr>
+						<td nowrap align=left class='idokeido'> 緯度</td>
+						<td nowrap width=140 class='idokeido_value'><font color=red id="show_y"></font></td>
+					</tr>
+					<tr>
+						<td nowrap align=left class='idokeido'> 経度</td>
+						<td nowrap width=140><font color=red id="show_x"></font></td>
+					</tr>
+					<tr>
+						<td nowrap align=left class='idokeido'> 標高</td>
+						<td nowrap width=140><font color=red id="show_z"></font></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+			<tr>
+				<td valign=middle>
+					<input type='button' value='了解' onclick='notifyParent();'>
+				</td>
+			</tr>
+	</table>
+</body>
+</html>
+
